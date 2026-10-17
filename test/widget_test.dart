@@ -57,6 +57,37 @@ void main() {
     expect(find.textContaining('Số tín chỉ: 15'), findsOneWidget);
   });
 
+  testWidgets('NC2 he VLVH bat buoc chon buoi Toi', (WidgetTester tester) async {
+    await moForm(tester);
+
+    await tester.enterText(find.widgetWithText(TextFormField, 'Họ và tên *'), 'Nguyen Van B');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Mã số sinh viên *'), '2410106387');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Email *'), 'b@example.com');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(DropdownButtonFormField<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cơ sở dữ liệu').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(RadioListTile<String>, 'Vừa làm vừa học'));
+    await tester.tap(find.widgetWithText(CheckboxListTile, 'Sáng'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(FilledButton, 'ĐĂNG KÝ'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Hệ vừa làm vừa học bắt buộc chọn buổi Tối'), findsOneWidget);
+    expect(find.text('Xác nhận đăng ký'), findsNothing);
+  });
+
+  testWidgets('NC3 dem ky tu con lai cho ho ten', (WidgetTester tester) async {
+    await moForm(tester);
+
+    expect(find.text('Còn lại 50 ký tự'), findsOneWidget);
+    await tester.enterText(find.widgetWithText(TextFormField, 'Họ và tên *'), 'abcdef');
+    await tester.pumpAndSettle();
+    expect(find.text('Còn lại 44 ký tự'), findsOneWidget);
+  });
+
   testWidgets('Lam lai dua form ve mac dinh', (WidgetTester tester) async {
     await moForm(tester);
 

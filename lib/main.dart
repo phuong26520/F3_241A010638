@@ -87,6 +87,13 @@ class _RegisterPageState extends State<RegisterPage> {
     }
     if (!hopLe) return;
 
+    // NC2: kiểm tra phụ thuộc giữa hệ đào tạo và buổi học
+    if (_heDaoTao == 'Vừa làm vừa học' && !_buoiDaChon.contains('Tối')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Hệ vừa làm vừa học bắt buộc chọn buổi Tối')),
+      );
+      return;
+    }
 
     showDialog<void>(
       context: context,
@@ -137,14 +144,20 @@ class _RegisterPageState extends State<RegisterPage> {
           child: ListView(
             padding: const EdgeInsets.all(20),
             children: [
-              TextFormField(
-                controller: _hoTenCtrl,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelText: 'Họ và tên *',
-                  prefixIcon: Icon(Icons.person_outline),
+              // NC3: đếm ký tự còn lại cho ô Họ tên
+              ValueListenableBuilder<TextEditingValue>(
+                valueListenable: _hoTenCtrl,
+                builder: (context, value, _) => TextFormField(
+                  controller: _hoTenCtrl,
+                  textInputAction: TextInputAction.next,
+                  maxLength: 50,
+                  decoration: InputDecoration(
+                    labelText: 'Họ và tên *',
+                    prefixIcon: const Icon(Icons.person_outline),
+                    counterText: 'Còn lại ${50 - value.text.length} ký tự',
+                  ),
+                  validator: _kiemTraHoTen,
                 ),
-                validator: _kiemTraHoTen,
               ),
               const SizedBox(height: 12),
               TextFormField(
